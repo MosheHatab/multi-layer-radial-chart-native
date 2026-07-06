@@ -15,7 +15,10 @@ config.watchFolders = [root];
 
 // The library's peer deps must resolve to a single copy (the example's), or
 // React Native throws "Invalid hook call" / "two copies of React".
-const modules = Object.keys({ ...pkg.peerDependencies });
+// `react-native-web` is added too: on web, babel-plugin-react-native-web
+// rewrites the library's `react-native` imports (in ../src) to deep
+// `react-native-web/...` paths, which must resolve to the example's copy.
+const modules = [...Object.keys({ ...pkg.peerDependencies }), "react-native-web"];
 
 config.resolver.blockList = exclusionList(
 	modules.map(
