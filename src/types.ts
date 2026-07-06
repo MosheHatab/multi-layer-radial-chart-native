@@ -1,0 +1,133 @@
+import type { ReactNode } from "react";
+import type { StyleProp, ViewStyle } from "react-native";
+
+/** Visual pattern for a ring's progress stroke (color-independent differentiation). */
+export type RingPattern = "solid" | "dashed";
+
+/** SVG-native gradient kind for a ring's progress stroke. */
+export type RingGradientType = "linear" | "radial";
+
+/** A single color stop within a {@link RingGradient}. */
+export interface RingGradientStop {
+	/** Stop position as a fraction in `[0, 1]`. */
+	readonly offset: number;
+	/** Color for this stop (any color react-native-svg accepts). */
+	readonly color: string;
+	/** Optional stop opacity in `[0, 1]`. Defaults to `1`. */
+	readonly opacity?: number;
+}
+
+/**
+ * A gradient fill for a ring's progress stroke. react-native-svg natively
+ * supports `linear` and `radial` gradients (a true conic gradient is not part
+ * of the SVG paint spec, so it is intentionally not offered here).
+ */
+export interface RingGradient {
+	/** Gradient kind. Defaults to `"linear"`. */
+	readonly type?: RingGradientType;
+	/** Direction in degrees for a linear gradient (0 = left→right). Default `0`. */
+	readonly angle?: number;
+	/** Ordered color stops (at least two recommended). */
+	readonly stops: readonly RingGradientStop[];
+}
+
+/** A single data series rendered as one concentric ring. */
+export interface RadialDatum {
+	/** Current value. Values outside `[0, max]` are clamped for rendering. */
+	readonly value: number;
+	/** Upper bound for `value`. Must be greater than 0 to render progress. */
+	readonly max: number;
+	/** Color for the progress arc (any color react-native-svg accepts). */
+	readonly color: string;
+	/** Human-readable label used for the legend and accessible name. */
+	readonly label: string;
+	/** Optional color for the background track. Defaults to the themed track. */
+	readonly trackColor?: string;
+	/** Optional stroke pattern for the progress arc. Defaults to `"solid"`. */
+	readonly pattern?: RingPattern;
+	/** Optional gradient fill for the progress arc. Overrides `color` when set. */
+	readonly gradient?: RingGradient;
+	/**
+	 * Optional goal marker drawn as a tick on the track, expressed in the same
+	 * units as `value` (i.e. relative to `max`). Ignored when outside `[0, max]`.
+	 */
+	readonly threshold?: number;
+}
+
+/** Public props for the {@link RadialChart} component. */
+export interface RadialChartProps {
+	/** The series to render, outermost ring first. */
+	data: readonly RadialDatum[];
+	/** Fixed pixel size. Omit to size responsively to the container width. */
+	size?: number;
+	/** Angle (degrees) where every arc begins. Default `-90` (12 o'clock). */
+	startAngle?: number;
+	/** Pixel gap between adjacent rings. */
+	gap?: number;
+	/** Fixed stroke width (px). Auto-derived from `size`/count when omitted. */
+	ringWidth?: number;
+	/** Round the arc line caps. Default `true`. */
+	rounded?: boolean;
+	/**
+	 * Allow values above `max` to overrun the ring as an overlapping extra lap
+	 * (Apple-Watch style). When `false` (default) progress is clamped at 100%.
+	 */
+	allowOverflow?: boolean;
+	/** Animate value transitions. Default `true`. */
+	animate?: boolean;
+	/** Tween duration in milliseconds. Default `800`. */
+	animationDurationMs?: number;
+	/** Draw arcs clockwise. Default `true`. */
+	clockwise?: boolean;
+	/** Total sweep in degrees. Default `360`; e.g. `270` gauge, `180` semicircle. */
+	maxSweepDegrees?: number;
+	/** Render the built-in legend below the chart. Default `false`. */
+	showLegend?: boolean;
+	/** Called when a ring is pressed. Providing this makes each ring pressable. */
+	onSegmentPress?: (datum: NormalizedDatum, index: number) => void;
+	/** Background track color used when a datum omits its own `trackColor`. */
+	trackColor?: string;
+	/** Color of the inner (dark) goal/threshold marker tick. */
+	markerColor?: string;
+	/** Color of the outer (light) outline of the goal/threshold marker tick. */
+	markerOutlineColor?: string;
+	/** Text color for the built-in legend labels/values. */
+	legendTextColor?: string;
+	/** Extra style applied to the outer container `View`. */
+	style?: StyleProp<ViewStyle>;
+	/** Content rendered in the centre of the chart (absolutely positioned). */
+	children?: ReactNode;
+}
+
+/** A 2D point in SVG user space. */
+export interface Point {
+	readonly x: number;
+	readonly y: number;
+}
+
+/** Geometry for a single ring produced by the layout engine. */
+export interface RingLayout {
+	/** Centre-line radius of the ring stroke. */
+	readonly radius: number;
+	/** Stroke width of the ring. */
+	readonly strokeWidth: number;
+}
+
+/** A datum after validation and normalization, ready for rendering. */
+export interface NormalizedDatum {
+	readonly value: number;
+	readonly max: number;
+	readonly color: string;
+	readonly label: string;
+	readonly trackColor?: string;
+	readonly pattern: RingPattern;
+	readonly gradient?: RingGradient;
+	/** Progress as a fraction in `[0, 1]` (clamped). */
+	readonly fraction: number;
+	/** Unclamped progress as a fraction (`>= 0`); can exceed `1` for overflow. */
+	readonly rawFraction: number;
+	/** Progress as an integer percentage in `[0, 100]` (clamped). */
+	readonly percent: number;
+	/** Goal marker position as a fraction in `[0, 1]`, or `undefined` if unset. */
+	readonly thresholdFraction?: number;
+}

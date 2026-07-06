@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "Radial Chart Native Demo",
+    "slug": "multi-layer-radial-chart-native-demo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#0b1120"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0b1120"
+      }
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}
