@@ -50,6 +50,7 @@ export function RadialChart(props: RadialChartProps): JSX.Element {
 		clockwise = true,
 		maxSweepDegrees = DEFAULT_MAX_SWEEP,
 		showLegend = false,
+		percentDecimals,
 		onSegmentPress,
 		trackColor = DEFAULT_TRACK_COLOR,
 		markerColor = DEFAULT_MARKER_COLOR,
@@ -115,7 +116,13 @@ export function RadialChart(props: RadialChartProps): JSX.Element {
 					</View>
 				) : null}
 			</View>
-			{showLegend ? <RadialChartLabels data={normalized} textColor={legendTextColor} /> : null}
+			{showLegend ? (
+				<RadialChartLabels
+					data={normalized}
+					textColor={legendTextColor}
+					percentDecimals={percentDecimals}
+				/>
+			) : null}
 		</View>
 	);
 }

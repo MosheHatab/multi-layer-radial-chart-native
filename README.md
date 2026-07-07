@@ -4,14 +4,31 @@
 
 [![npm version](https://img.shields.io/npm/v/multi-layer-radial-chart-native.svg)](https://www.npmjs.com/package/multi-layer-radial-chart-native)
 [![npm downloads](https://img.shields.io/npm/dm/multi-layer-radial-chart-native.svg)](https://www.npmjs.com/package/multi-layer-radial-chart-native)
+[![minzipped size](https://img.shields.io/bundlephobia/minzip/multi-layer-radial-chart-native)](https://bundlephobia.com/package/multi-layer-radial-chart-native)
+[![CI](https://github.com/MosheHatab/multi-layer-radial-chart-native/actions/workflows/ci.yml/badge.svg)](https://github.com/MosheHatab/multi-layer-radial-chart-native/actions/workflows/ci.yml)
+[![provenance](https://img.shields.io/npm/v/multi-layer-radial-chart-native?label=provenance&logo=npm)](https://www.npmjs.com/package/multi-layer-radial-chart-native#provenance)
 [![types](https://img.shields.io/npm/types/multi-layer-radial-chart-native.svg)](https://www.npmjs.com/package/multi-layer-radial-chart-native)
 [![license](https://img.shields.io/npm/l/multi-layer-radial-chart-native.svg)](./LICENSE)
 
 Give it an array of `{ value, max, color, label }` and it renders concentric rings — like Apple Watch activity rings — with smooth `requestAnimationFrame` animations, responsive sizing, gradients, overflow laps, goal markers, and a built-in legend. All the math is pure and framework-agnostic; the view layer is a thin `react-native-svg` wrapper.
 
-> This is the **React Native** port of [`multi-layer-radial-chart`](https://www.npmjs.com/package/multi-layer-radial-chart) (the web/React version). Same core engine, same API surface, adapted to `react-native-svg` and native platform APIs.
+> **Using React on the web?** See the sibling package [`multi-layer-radial-chart`](https://www.npmjs.com/package/multi-layer-radial-chart) — this is its **React Native** port. Same core engine and API surface, adapted to `react-native-svg` and native platform APIs.
 
-**Try the demo:** a runnable Expo app lives in [`example/`](./example) — `cd example && npm install && npm run start`.
+<p align="center">
+  <img src="https://raw.githubusercontent.com/MosheHatab/multi-layer-radial-chart-native/main/docs/demo.gif" alt="Multi-Layer Radial Chart Native — animated activity rings with live controls" width="360" />
+</p>
+
+### Demo
+
+A runnable **Expo** demo lives in [`example/`](./example) — it showcases activity rings with a count-up center, live controls (animate, rounded, legend, overflow), plus gradient, overflow, goal-marker, gauge, and dashed cards with automatic light/dark theming:
+
+```sh
+cd example
+npm install
+npm run start        # press a / i / w for Android / iOS / web
+```
+
+> Prefer a hosted playground? Try it on [**Expo Snack**](https://snack.expo.dev/@moshehat/multi-layer-radial-chart-native) — the React-Native equivalent of StackBlitz (runs in the browser and on a device via QR). _Goes live once the package is published to npm._
 
 ---
 
@@ -30,6 +47,26 @@ Give it an array of `{ value, max, color, label }` and it renders concentric rin
 - **Headless** — `useRadialChart()` returns validated geometry and ready-to-use SVG path strings so you can draw the rings yourself.
 - **Framework-agnostic core** — import `multi-layer-radial-chart-native/core` for pure geometry/scale/validation with **zero React/RN** at runtime.
 - **Strict typing** — no `any`, fully typed public API, math fully decoupled from the UI.
+
+---
+
+## Architecture highlights
+
+> **Challenge:** An SVG elliptical arc (`A` command) cannot draw a full 360° circle — the start and end points coincide, so the arc collapses and renders nothing.
+> **Solution:** `describeArc` detects a full sweep and emits **two half-arcs** instead, while still supporting partial sweeps (gauges/semicircles) through a single `sweepDegrees` parameter. This lives in a pure, unit-tested `core/geometry` module with **zero React/RN**, keeping trigonometry completely separate from the rendering layer.
+
+> **Challenge:** Animating many rings without stale closures or leaked animation frames.
+> **Solution:** A dedicated `useAnimatedValue` hook owns one `requestAnimationFrame` loop per ring, restarts cleanly from the currently displayed value when the target changes, and always cancels the frame on cleanup. Per-ring hooks live inside the `RadialRing` component (never inside a `.map()`), respecting the Rules of Hooks.
+
+> **Challenge:** The web version leans on the DOM (`ResizeObserver`, `matchMedia`, CSS variables) that don't exist in React Native.
+> **Solution:** Only the thin adapter layer changed — sizing moved to `View` `onLayout`, reduced-motion to `AccessibilityInfo`, and theming to explicit props. The entire `core/` + `utils/` math layer is shared **verbatim** with the web package.
+
+## Tech stack
+
+- **Language / UI:** TypeScript (strict), React, React Native
+- **Rendering:** [`react-native-svg`](https://github.com/software-mansion/react-native-svg)
+- **Native APIs:** `requestAnimationFrame`, `View` `onLayout`, `AccessibilityInfo`
+- **Tooling:** [`react-native-builder-bob`](https://github.com/callstack/react-native-builder-bob) (build), Vitest (core tests), ESLint, Changesets, Expo (demo)
 
 ---
 
@@ -287,17 +324,35 @@ The `core/` and `utils/` folders are copied verbatim from the web package — th
 ## Development
 
 ```sh
-npm install         # install deps (also runs `bob build` via prepare)
-npm run typecheck   # tsc --noEmit
-npm run build       # react-native-builder-bob → lib/ (module, commonjs, typescript)
+npm install          # install deps
+
+# verify everything (same as CI)
+npm run typecheck && npm run lint && npm run test && npm run build && npm run check:package
 
 # run the demo app
 cd example
 npm install
-npm run start       # press a / i / w for Android / iOS / web
+npm run start        # press a / i / w for Android / iOS / web
 ```
 
-The library is built with [`react-native-builder-bob`](https://github.com/callstack/react-native-builder-bob), which emits ESM, CommonJS, and TypeScript declaration outputs. Metro consumes the TypeScript `source` directly during development.
+- `npm run test` runs the pure-`core` unit tests with **Vitest** (no React Native needed — the geometry/scale math is framework-agnostic).
+- `npm run build` uses [`react-native-builder-bob`](https://github.com/callstack/react-native-builder-bob) to emit ESM, CommonJS, and TypeScript declaration outputs. Metro consumes the TypeScript `source` directly during development, so edits hot-reload in the demo without a rebuild.
+- `npm run check:package` validates the published package layout with [`publint`](https://publint.dev).
+
+CI (`.github/workflows/ci.yml`) runs the same checks on every PR.
+
+---
+
+## Publishing to npm
+
+The package is versioned with [Changesets](https://github.com/changesets/changesets) and published automatically from CI.
+
+```sh
+npm run changeset    # describe the change; pick the semver bump
+git commit -am "feat: ..." && git push
+```
+
+On push to `main`, the `Release` workflow opens a **"Version Packages"** PR. Merging that PR bumps the version, updates `CHANGELOG.md`, and publishes to npm with provenance. Publishing uses npm **OIDC trusted publishing** (configure the package's trusted publisher on npm, or set an `NPM_TOKEN` repository secret).
 
 ---
 

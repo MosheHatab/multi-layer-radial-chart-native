@@ -2,7 +2,7 @@ import type { Point } from "../types";
 import { clamp, degToRad, roundTo } from "../utils/math";
 import { DEGREES_IN_CIRCLE, DEGREES_IN_HALF_CIRCLE, PATH_PRECISION } from "./constants";
 
-/* eslint-disable id-length -- x1/y1/x2/y2 are the canonical SVG gradient attribute names */
+ 
 /** The four unit-square endpoints of a linear gradient at a given angle. */
 export interface GradientVector {
 	readonly x1: number;
@@ -28,7 +28,7 @@ export function gradientVector(angleDeg: number): GradientVector {
 		y2: roundTo(GRADIENT_MIDPOINT + deltaY, PATH_PRECISION),
 	};
 }
-/* eslint-enable id-length */
+ 
 
 /** Convert a polar coordinate (centre, radius, angle in degrees) to cartesian. */
 export function polarToCartesian(

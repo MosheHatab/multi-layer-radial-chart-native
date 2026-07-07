@@ -50,11 +50,23 @@
     "!**/__tests__",
     "!**/*.test.*"
   ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "build": "bob build",
-    "prepare": "bob build",
-    "clean": "rimraf lib"
+    "clean": "rimraf lib",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "npm run build && changeset publish",
+    "check:package": "publint",
+    "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
     "react": ">=18.0.0",
@@ -62,13 +74,23 @@
     "react-native-svg": ">=13.0.0"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.31.0",
+    "@eslint/js": "^9.39.4",
     "@types/react": "^18.3.12",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-simple-import-sort": "^13.0.0",
+    "eslint-plugin-unused-imports": "^4.4.1",
+    "publint": "^0.3.21",
     "react": "18.3.1",
     "react-native": "0.76.5",
     "react-native-builder-bob": "^0.32.1",
     "react-native-svg": "^15.8.0",
     "rimraf": "^6.0.1",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.62.1",
+    "vitest": "^4.1.9"
   },
   "react-native-builder-bob": {
     "source": "src",
