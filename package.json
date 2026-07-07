@@ -1,6 +1,6 @@
 {
   "name": "multi-layer-radial-chart-native",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A lightweight, dependency-light React Native + TypeScript library for animated multi-layer radial (activity-ring) charts, rendered with react-native-svg.",
   "license": "MIT",
   "author": "Moshe Hatab",
