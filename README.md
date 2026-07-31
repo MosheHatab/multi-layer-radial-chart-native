@@ -28,7 +28,7 @@ npm install
 npm run start        # press a / i / w for Android / iOS / web
 ```
 
-> Prefer a hosted playground? Try it on [**Expo Snack**](https://snack.expo.dev/@moshehat/multi-layer-radial-chart-native) — the React-Native equivalent of StackBlitz (runs in the browser and on a device via QR). _Goes live once the package is published to npm._
+> Prefer a hosted playground? Try it on [**Expo Snack**](https://snack.expo.dev/@moshehat/multi-layer-radial-chart-native) — the React Native equivalent of StackBlitz (runs in the browser and on a device via QR).
 
 ---
 
@@ -130,6 +130,7 @@ export function Activity() {
 | `clockwise`          | `boolean`                                   | `true`         | Draw arcs clockwise.                                             |
 | `maxSweepDegrees`    | `number`                                    | `360`          | Total sweep in deg (`270` gauge, `180` semicircle).             |
 | `showLegend`         | `boolean`                                   | `false`        | Render the built-in legend below the chart.                     |
+| `percentDecimals`    | `number`                                    | `0`            | Decimal places for legend percentages.                          |
 | `onSegmentPress`     | `(datum, index) => void`                    | —              | Press a ring. Providing this makes each ring pressable.         |
 | `trackColor`         | `string`                                    | translucent gray | Background track color when a datum omits `trackColor`.       |
 | `markerColor`        | `string`                                    | dark           | Inner (dark) goal/threshold marker tick color.                  |
