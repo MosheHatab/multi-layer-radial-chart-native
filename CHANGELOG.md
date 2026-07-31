@@ -1,5 +1,11 @@
 # multi-layer-radial-chart-native
 
+## 1.0.1
+
+### Patch Changes
+
+- 6227d1b: minor fixes & readme updates
+
 ## 1.0.0
 
 ### Major Changes
@@ -7,6 +13,7 @@
 - First stable release.
 
   ### Added
+
   - Multi-layer radial (activity-ring) chart rendered with `react-native-svg`.
   - Animated value transitions via `requestAnimationFrame` (honors OS Reduce Motion).
   - Responsive sizing via `View` `onLayout`, or a fixed `size`.
@@ -18,5 +25,6 @@
   - Framework-agnostic `multi-layer-radial-chart-native/core` entry (no React/RN).
 
   ### Notes
+
   - Public API is stable under semver.
   - Sibling of [`multi-layer-radial-chart`](https://www.npmjs.com/package/multi-layer-radial-chart); same core engine, adapted for React Native.
