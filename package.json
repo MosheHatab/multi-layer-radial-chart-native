@@ -64,7 +64,7 @@
     "test:watch": "vitest",
     "changeset": "changeset",
     "version": "changeset version",
-    "release": "npm run build && changeset publish",
+    "release": "npm run build && node scripts/publish.mjs",
     "check:package": "publint",
     "prepublishOnly": "npm run build"
   },
