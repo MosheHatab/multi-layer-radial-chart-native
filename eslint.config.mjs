@@ -6,7 +6,7 @@ import unusedImports from "eslint-plugin-unused-imports";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-	{ ignores: ["lib/**", "coverage/**", "example/**", "node_modules/**"] },
+	{ ignores: ["lib/**", "coverage/**", "example/**", "node_modules/**", "scripts/**"] },
 	js.configs.recommended,
 	...tseslint.configs.recommended,
 	{
